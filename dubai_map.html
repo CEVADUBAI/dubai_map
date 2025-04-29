@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Dubai Landmarks Map</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.16.1/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.16.1/mapbox-gl.css" rel="stylesheet" />
+  <style>
+    body { margin: 0; padding: 0; }
+    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+  </style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+  mapboxgl.accessToken = 'pk.eyJ1IjoiaHVkYWFvIiwiYSI6ImNtYTIybzA1cTJwdTEyanNteGxoYnU4NzMifQ.hIhL3wFKalHuE3k-NjZ5SA';
+  
+  const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/light-v11',
+    center: [55.2708, 25.2048],
+    zoom: 12,
+    pitch: 60,
+    bearing: -17.6,
+    antialias: true
+  });
+
+  map.on('load', () => {
+    // Add 3D buildings layer
+    map.addLayer({
+      id: '3d-buildings',
+      source: 'composite',
+      'source-layer': 'building',
+      filter: ['==', 'extrude', 'true'],
+      type: 'fill-extrusion',
+      minzoom: 15,
+      paint: {
+        'fill-extrusion-color': '#aaa',
+        'fill-extrusion-height': ['get', 'height'],
+        'fill-extrusion-base': ['get', 'min_height'],
+        'fill-extrusion-opacity': 0.6
+      }
+    });
+
+    // Add landmark markers
+    const landmarks = [
+      { name: 'Burj Khalifa', coords: [55.2744, 25.1972] },
+      { name: 'Dubai Mall', coords: [55.277397, 25.199514] },
+      { name: 'Dubai Frame', coords: [55.288519, 25.221172] },
+      { name: 'Bluewaters Island', coords: [55.122156, 25.082916] },
+      { name: 'The Beach, JBR', coords: [55.133948, 25.077857] },
+      { name: 'Dubai Marina', coords: [55.144075, 25.08135] },
+      { name: 'Dubai Safari Park', coords: [55.4477647, 25.1771478] },
+      { name: 'Al Seef', coords: [55.297, 25.265] },
+      { name: 'Abra Boat Ride (Creek)', coords: [55.296, 25.269] },
+      { name: 'Old Souk (Spice Souk)', coords: [55.2970, 25.2675] },
+      { name: 'Gold Souk', coords: [55.2986, 25.2708] },
+      { name: 'Museum of the Future', coords: [55.2821, 25.2191194] },
+      { name: 'Atlantis, The Palm', coords: [55.1170, 25.1252] },
+      { name: 'Kite Beach', coords: [55.207336, 25.164808] }
+    ];
+
+    landmarks.forEach(landmark => {
+      new mapboxgl.Marker()
+        .setLngLat(landmark.coords)
+        .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(landmark.name))
+        .addTo(map);
+    });
+  });
+</script>
+</body>
+</html>
